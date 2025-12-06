@@ -9,8 +9,8 @@
 </head>
 <body>
     <div class="app">
-        <!-- Верхняя панель с категориями -->
-        <div class="categories">
+        <!-- Верхняя панель с категориями (только на главной) -->
+        <div id="categories" class="categories">
             <div class="category active">Все</div>
             <div class="category">Экзотика</div>
             <div class="category">Сеты</div>
@@ -20,20 +20,120 @@
 
         <!-- Контент -->
         <div class="content">
-            <div id="products" class="products-grid">
-                <!-- Товары будут здесь -->
+            <!-- Главная страница с товарами -->
+            <div id="main-page" class="page active">
+                <div id="products" class="products-grid">
+                    <!-- Товары будут здесь -->
+                </div>
+            </div>
+
+            <!-- Страница корзины -->
+            <div id="cart-page" class="page">
+                <div class="page-header">
+                    <h2>🛒 Корзина</h2>
+                    <p id="cart-empty" class="empty-message">Корзина пуста</p>
+                </div>
+                <div id="cart-items" class="cart-items">
+                    <!-- Товары в корзине -->
+                </div>
+                <div class="cart-footer">
+                    <div class="cart-total">
+                        <span>Итого:</span>
+                        <span id="total-price">0 ₽</span>
+                    </div>
+                    <button id="checkout-btn" class="checkout-btn">Оформить заказ</button>
+                    <button id="clear-cart" class="clear-btn">Очистить корзину</button>
+                </div>
+            </div>
+
+            <!-- Страница профиля -->
+            <div id="profile-page" class="page">
+                <div class="page-header">
+                    <h2>👤 Профиль</h2>
+                </div>
+                <div class="profile-info">
+                    <div class="balance-card">
+                        <div class="balance-title">Ваши баллы</div>
+                        <div class="balance-amount" id="user-balance">500</div>
+                        <div class="balance-subtitle">1 балл = 1 рубль</div>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3>📦 История заказов</h3>
+                        <p class="empty-message">Заказов пока нет</p>
+                    </div>
+                    
+                    <div class="profile-section">
+                        <h3>⚙️ Настройки</h3>
+                        <div class="settings-item">
+                            <span>Уведомления</span>
+                            <label class="switch">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <button class="support-btn">💬 Поддержка (9:00-21:00)</button>
+                    <button class="logout-btn">🚪 Выйти</button>
+                </div>
+            </div>
+
+            <!-- Страница "О проекте" -->
+            <div id="about-page" class="page">
+                <div class="page-header">
+                    <h2>ℹ️ О проекте</h2>
+                </div>
+                <div class="about-content">
+                    <div class="about-card">
+                        <h3>🌸 BUNCH</h3>
+                        <p>Цветы по себестоимости с доставкой по Москве.</p>
+                        <p>Никаких излишеств и сложных композиций - только свежие цветы, упакованные в стильный бокс для доставки.</p>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3>📦 Как это работает</h3>
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-text">Выбираете цветы в каталоге</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-text">Оформляете заказ в Mini App</div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-text">Ожидаете доставку в указанное время</div>
+                        </div>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3>📞 Контакты</h3>
+                        <p>Поддержка в боте: 9:00-21:00</p>
+                        <p>Телеграм-канал: @bunch_channel</p>
+                        <p>Доставка: по всей Москве</p>
+                    </div>
+                    
+                    <div class="about-section">
+                        <h3>🚚 Доставка</h3>
+                        <p>• Ежедневно с 9:00 до 21:00</p>
+                        <p>• Можно выбрать удобное время</p>
+                        <p>• Стильная упаковка в бокс</p>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <!-- Нижнее меню -->
+        <!-- Нижнее меню (ВСЕГДА ВИДИМО) -->
         <div class="bottom-menu">
-            <div class="menu-item active" data-page="menu">
+            <div class="menu-item active" data-page="main">
                 <span>🏠</span>
                 <span>Меню</span>
             </div>
             <div class="menu-item" data-page="cart">
                 <span>🛒</span>
                 <span>Корзина</span>
+                <span class="cart-badge hidden">0</span>
             </div>
             <div class="menu-item" data-page="profile">
                 <span>👤</span>
@@ -42,45 +142,6 @@
             <div class="menu-item" data-page="about">
                 <span>ℹ️</span>
                 <span>О проекте</span>
-            </div>
-        </div>
-
-        <!-- Корзина (скрыта по умолчанию) -->
-        <div id="cart-page" class="page hidden">
-            <div class="page-header">
-                <h2>Корзина</h2>
-            </div>
-            <div id="cart-items" class="cart-items">
-                <!-- Товары в корзине -->
-            </div>
-            <div class="cart-total">
-                <span>Итого:</span>
-                <span id="total-price">0 ₽</span>
-            </div>
-            <button class="checkout-btn">Оформить заказ</button>
-        </div>
-
-        <!-- Профиль (скрыт по умолчанию) -->
-        <div id="profile-page" class="page hidden">
-            <div class="page-header">
-                <h2>Профиль</h2>
-            </div>
-            <div class="profile-info">
-                <p><strong>Баллы:</strong> <span id="user-balance">500</span> баллов</p>
-                <p>1 балл = 1 рубль</p>
-                <button class="support-btn">Поддержка (9:00-21:00)</button>
-            </div>
-        </div>
-
-        <!-- О проекте (скрыто по умолчанию) -->
-        <div id="about-page" class="page hidden">
-            <div class="page-header">
-                <h2>О проекте</h2>
-            </div>
-            <div class="about-content">
-                <p>Bunch - цветы по себестоимости с доставкой по Москве.</p>
-                <p>Никаких излишеств - только свежие цветы в стильном боксе.</p>
-                <p>Поддержка: @bunch_channel</p>
             </div>
         </div>
     </div>
