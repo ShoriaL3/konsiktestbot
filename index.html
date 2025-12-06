@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BUNCH - Цветы по себестоимости</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div class="app">
+        <!-- Верхняя панель с категориями -->
+        <div class="categories">
+            <div class="category active">Все</div>
+            <div class="category">Экзотика</div>
+            <div class="category">Сеты</div>
+            <div class="category">Ранункулюсы</div>
+            <div class="category">Зелень</div>
+        </div>
+
+        <!-- Контент -->
+        <div class="content">
+            <div id="products" class="products-grid">
+                <!-- Товары будут здесь -->
+            </div>
+        </div>
+
+        <!-- Нижнее меню -->
+        <div class="bottom-menu">
+            <div class="menu-item active" data-page="menu">
+                <span>🏠</span>
+                <span>Меню</span>
+            </div>
+            <div class="menu-item" data-page="cart">
+                <span>🛒</span>
+                <span>Корзина</span>
+            </div>
+            <div class="menu-item" data-page="profile">
+                <span>👤</span>
+                <span>Профиль</span>
+            </div>
+            <div class="menu-item" data-page="about">
+                <span>ℹ️</span>
+                <span>О проекте</span>
+            </div>
+        </div>
+
+        <!-- Корзина (скрыта по умолчанию) -->
+        <div id="cart-page" class="page hidden">
+            <div class="page-header">
+                <h2>Корзина</h2>
+            </div>
+            <div id="cart-items" class="cart-items">
+                <!-- Товары в корзине -->
+            </div>
+            <div class="cart-total">
+                <span>Итого:</span>
+                <span id="total-price">0 ₽</span>
+            </div>
+            <button class="checkout-btn">Оформить заказ</button>
+        </div>
+
+        <!-- Профиль (скрыт по умолчанию) -->
+        <div id="profile-page" class="page hidden">
+            <div class="page-header">
+                <h2>Профиль</h2>
+            </div>
+            <div class="profile-info">
+                <p><strong>Баллы:</strong> <span id="user-balance">500</span> баллов</p>
+                <p>1 балл = 1 рубль</p>
+                <button class="support-btn">Поддержка (9:00-21:00)</button>
+            </div>
+        </div>
+
+        <!-- О проекте (скрыто по умолчанию) -->
+        <div id="about-page" class="page hidden">
+            <div class="page-header">
+                <h2>О проекте</h2>
+            </div>
+            <div class="about-content">
+                <p>Bunch - цветы по себестоимости с доставкой по Москве.</p>
+                <p>Никаких излишеств - только свежие цветы в стильном боксе.</p>
+                <p>Поддержка: @bunch_channel</p>
+            </div>
+        </div>
+    </div>
+    <script src="app.js"></script>
+</body>
+</html>
