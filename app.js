@@ -25,11 +25,7 @@ const products = [
     { id: 9, name: "🎨 Набор для рисования", price: 1900, category: "Хобби", desc: "24 цвета, кисти и бумага" },
     { id: 10, name: "☕ Кофемашина", price: 8900, category: "Для дома", desc: "Компактная кофемашина для дома" },
     { id: 11, name: "⌚ Умные часы", price: 4500, category: "Электроника", desc: "Фитнес-трекер с сенсорным экраном" },
-    { id: 12, name: "👗 Платье вечернее", price: 5500, category: "Одежда", desc: "Элегантное платье для вечера" },
-    { id: 13, name: "🎮 Игровая консоль", price: 28900, category: "Электроника", desc: "Портативная игровая консоль" },
-    { id: 14, name: "🏋️ Гантели 5кг", price: 1800, category: "Спорт", desc: "Набор гантелей, регулируемый вес" },
-    { id: 15, name: "🛋️ Декоративная подушка", price: 1200, category: "Для дома", desc: "Мягкая подушка для интерьера" },
-    { id: 16, name: "🧴 Шампунь и бальзам", price: 900, category: "Красота", desc: "Уход за волосами, набор 2в1" }
+    { id: 12, name: "👗 Платье вечернее", price: 5500, category: "Одежда", desc: "Элегантное платье для вечера" }
 ];
 
 // Инициализация при загрузке
@@ -112,7 +108,8 @@ function setupCategoryScrolling() {
 function setupEventListeners() {
     // Категории товаров
     document.querySelectorAll('.category').forEach(cat => {
-        cat.addEventListener('click', () => {
+        cat.addEventListener('click', (e) => {
+            e.preventDefault();
             const categoryName = cat.textContent;
             selectCategory(categoryName);
             
@@ -127,7 +124,8 @@ function setupEventListeners() {
 
     // Нижнее меню
     document.querySelectorAll('.menu-item').forEach(item => {
-        item.addEventListener('click', () => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
             const page = item.dataset.page;
             showPage(page);
             
@@ -141,6 +139,7 @@ function setupEventListeners() {
 
     // Обработка добавления в корзину
     document.addEventListener('click', (e) => {
+        e.preventDefault();
         if (e.target.classList.contains('add-to-cart')) {
             const productId = parseInt(e.target.dataset.id);
             addToCart(productId);
@@ -153,16 +152,25 @@ function setupEventListeners() {
     });
 
     // Кнопки корзины
-    document.getElementById('checkout-btn')?.addEventListener('click', checkout);
-    document.getElementById('clear-cart')?.addEventListener('click', clearCart);
+    document.getElementById('checkout-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        checkout();
+    });
+    
+    document.getElementById('clear-cart')?.addEventListener('click', (e) => {
+        e.preventDefault();
+        clearCart();
+    });
     
     // Кнопка поддержки (неактивная)
-    document.getElementById('support-btn')?.addEventListener('click', () => {
+    document.getElementById('support-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
         showNotification('Поддержка временно не доступна');
     });
     
     // Кнопка выхода
-    document.querySelector('.logout-btn')?.addEventListener('click', () => {
+    document.querySelector('.logout-btn')?.addEventListener('click', (e) => {
+        e.preventDefault();
         if (confirm('Выйти из аккаунта?')) {
             localStorage.removeItem('shopState');
             location.reload();
@@ -173,6 +181,7 @@ function setupEventListeners() {
     const themeToggle = document.querySelector('input[type="checkbox"][value=""]');
     if (themeToggle) {
         themeToggle.addEventListener('change', (e) => {
+            e.preventDefault();
             document.body.classList.toggle('dark-theme', e.target.checked);
             saveState();
         });
@@ -199,6 +208,8 @@ function selectCategory(categoryName) {
 
 // Показать страницу
 function showPage(pageName) {
+    console.log('Переход на страницу:', pageName);
+    
     // Скрываем все страницы
     document.querySelectorAll('.page').forEach(page => {
         page.classList.remove('active');
@@ -212,12 +223,14 @@ function showPage(pageName) {
     
     // Показываем/скрываем категории (только на главной)
     const categoriesElement = document.querySelector('.categories-wrapper');
+    const marqueeElement = document.querySelector('.marquee');
+    
     if (pageName === 'main') {
         categoriesElement.style.display = 'flex';
-        document.querySelector('.marquee').style.display = 'block';
+        marqueeElement.style.display = 'block';
     } else {
         categoriesElement.style.display = 'none';
-        document.querySelector('.marquee').style.display = 'none';
+        marqueeElement.style.display = 'none';
     }
     
     // Обновляем контент страницы
@@ -295,4 +308,206 @@ function addToCart(productId) {
     updateCartBadge();
     saveState();
     
-    // Обновляем кнопку
+    // Обновляем кнопку на главной странице
+    if (state.currentPage === 'main') {
+        renderProducts(state.selectedCategory);
+    }
+    
+    // Если мы на странице корзины, обновляем её
+    if (state.currentPage === 'cart') {
+        renderCart();
+    }
+    
+    // Показываем уведомление
+    showNotification(`Добавлено: ${product.name}`);
+}
+
+// Удалить из корзины
+function removeFromCart(productId) {
+    state.cart = state.cart.filter(item => item.id !== productId);
+    
+    updateCartBadge();
+    saveState();
+    renderCart();
+    
+    // Обновляем главную страницу если открыта
+    if (state.currentPage === 'main') {
+        renderProducts(state.selectedCategory);
+    }
+}
+
+// Обновить бейдж корзины
+function updateCartBadge() {
+    const badge = document.querySelector('.cart-badge');
+    const totalItems = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+    
+    if (badge) {
+        if (totalItems > 0) {
+            badge.textContent = totalItems > 9 ? '9+' : totalItems;
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
+    }
+}
+
+// Рендер корзины
+function renderCart() {
+    const container = document.getElementById('cart-items');
+    const totalPriceElement = document.getElementById('total-price');
+    const emptyMessage = document.getElementById('cart-empty');
+    const checkoutBtn = document.getElementById('checkout-btn');
+    const clearBtn = document.getElementById('clear-cart');
+    
+    if (!container) return;
+    
+    container.innerHTML = '';
+    
+    if (state.cart.length === 0) {
+        emptyMessage.classList.remove('hidden');
+        if (checkoutBtn) checkoutBtn.disabled = true;
+        if (clearBtn) clearBtn.disabled = true;
+        if (totalPriceElement) totalPriceElement.textContent = '0 ₽';
+        return;
+    }
+    
+    emptyMessage.classList.add('hidden');
+    if (checkoutBtn) checkoutBtn.disabled = false;
+    if (clearBtn) clearBtn.disabled = false;
+    
+    let total = 0;
+    
+    state.cart.forEach(item => {
+        const itemTotal = item.price * item.quantity;
+        total += itemTotal;
+        
+        const itemElement = document.createElement('div');
+        itemElement.className = 'cart-item';
+        itemElement.innerHTML = `
+            <div class="cart-item-info">
+                <div class="cart-item-title">${item.name}</div>
+                <div class="cart-item-price">${item.price.toLocaleString()} ₽ × ${item.quantity}</div>
+            </div>
+            <div class="cart-item-controls">
+                <div class="cart-item-quantity">${itemTotal.toLocaleString()} ₽</div>
+                <button class="cart-item-remove" data-id="${item.id}">×</button>
+            </div>
+        `;
+        container.appendChild(itemElement);
+    });
+    
+    if (totalPriceElement) {
+        totalPriceElement.textContent = `${total.toLocaleString()} ₽`;
+    }
+}
+
+// Обновить профиль
+function updateProfile() {
+    const balanceElement = document.getElementById('user-balance');
+    if (balanceElement) {
+        balanceElement.textContent = state.balance;
+    }
+}
+
+// Очистить корзину
+function clearCart() {
+    if (state.cart.length === 0 || !confirm('Очистить корзину?')) return;
+    
+    state.cart = [];
+    updateCartBadge();
+    saveState();
+    renderCart();
+    
+    if (state.currentPage === 'main') {
+        renderProducts(state.selectedCategory);
+    }
+    
+    showNotification('Корзина очищена');
+}
+
+// Оформление заказа
+function checkout() {
+    if (state.cart.length === 0) {
+        showNotification('Корзина пуста');
+        return;
+    }
+    
+    const total = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const finalPrice = Math.max(0, total - state.balance);
+    
+    const orderData = {
+        type: 'order',
+        cart: state.cart,
+        total: total,
+        balance: state.balance,
+        balanceUsed: Math.min(state.balance, total),
+        finalPrice: finalPrice,
+        timestamp: new Date().toISOString(),
+        shop: 'Мой магазин'
+    };
+    
+    // Отправляем данные в Telegram бота
+    if (tg && tg.sendData) {
+        tg.sendData(JSON.stringify(orderData));
+    }
+    
+    // Показываем подтверждение
+    showNotification(`Заказ оформлен на ${finalPrice.toLocaleString()} ₽!`, 5000);
+    
+    // Очищаем корзину после оформления
+    state.cart = [];
+    state.balance = Math.max(0, state.balance - Math.min(state.balance, total));
+    updateCartBadge();
+    saveState();
+    renderCart();
+    updateProfile();
+}
+
+// Показать уведомление
+function showNotification(message, duration = 3000) {
+    // Создаем элемент уведомления
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #2196F3;
+        color: white;
+        padding: 12px 24px;
+        border-radius: 25px;
+        box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        z-index: 10000;
+        font-weight: 500;
+        animation: slideIn 0.3s ease;
+    `;
+    
+    // Добавляем стили анимации
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideIn {
+            from { top: -50px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
+        }
+    `;
+    document.head.appendChild(style);
+    
+    document.body.appendChild(notification);
+    
+    // Удаляем через указанное время
+    setTimeout(() => {
+        notification.style.animation = 'slideIn 0.3s ease reverse';
+        setTimeout(() => {
+            if (notification.parentNode) {
+                notification.parentNode.removeChild(notification);
+            }
+        }, 300);
+    }, duration);
+}
+
+// Для отладки
+console.log('Магазин товаров загружен');
+console.log('Web App URL:', window.location.href);
+console.log('Telegram WebApp доступен:', !!tg);
