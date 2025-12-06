@@ -3,19 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BUNCH - Цветы по себестоимости</title>
+    <title>Мой магазин</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
     <div class="app">
-        <!-- Верхняя панель с категориями (только на главной) -->
-        <div id="categories" class="categories">
-            <div class="category active">Все</div>
-            <div class="category">Экзотика</div>
-            <div class="category">Сеты</div>
-            <div class="category">Ранункулюсы</div>
-            <div class="category">Зелень</div>
+        <!-- Бегущая строка -->
+        <div class="marquee">
+            <div class="marquee-content">
+                <span>🔥 Акция! • Скидка 10% на первый заказ • Быстрая доставка • </span>
+                <span>🔥 Акция! • Скидка 10% на первый заказ • Быстрая доставка • </span>
+                <span>🔥 Акция! • Скидка 10% на первый заказ • Быстрая доставка • </span>
+            </div>
+        </div>
+
+        <!-- Верхняя панель с категориями -->
+        <div class="categories-wrapper">
+            <button class="scroll-btn scroll-left" id="scrollLeft">‹</button>
+            <div id="categories" class="categories">
+                <div class="category active">Все товары</div>
+                <div class="category">Электроника</div>
+                <div class="category">Одежда</div>
+                <div class="category">Книги</div>
+                <div class="category">Для дома</div>
+                <div class="category">Спорт</div>
+                <div class="category">Красота</div>
+                <div class="category">Игрушки</div>
+                <div class="category">Автотовары</div>
+                <div class="category">Хобби</div>
+            </div>
+            <button class="scroll-btn scroll-right" id="scrollRight">›</button>
         </div>
 
         <!-- Контент -->
@@ -72,30 +90,37 @@
                                 <span class="slider"></span>
                             </label>
                         </div>
+                        <div class="settings-item">
+                            <span>Темная тема</span>
+                            <label class="switch">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
                     
-                    <button class="support-btn">💬 Поддержка (9:00-21:00)</button>
+                    <button class="support-btn" id="support-btn">💬 Поддержка</button>
                     <button class="logout-btn">🚪 Выйти</button>
                 </div>
             </div>
 
-            <!-- Страница "О проекте" -->
+            <!-- Страница "О магазине" -->
             <div id="about-page" class="page">
                 <div class="page-header">
-                    <h2>ℹ️ О проекте</h2>
+                    <h2>ℹ️ О магазине</h2>
                 </div>
                 <div class="about-content">
                     <div class="about-card">
-                        <h3>🌸 BUNCH</h3>
-                        <p>Цветы по себестоимости с доставкой по Москве.</p>
-                        <p>Никаких излишеств и сложных композиций - только свежие цветы, упакованные в стильный бокс для доставки.</p>
+                        <h3>🛍️ Мой магазин</h3>
+                        <p>Интернет-магазин товаров на любой вкус.</p>
+                        <p>Широкий ассортимент, быстрая доставка и приятные цены.</p>
                     </div>
                     
                     <div class="about-section">
-                        <h3>📦 Как это работает</h3>
+                        <h3>📦 Как сделать заказ</h3>
                         <div class="step">
                             <div class="step-number">1</div>
-                            <div class="step-text">Выбираете цветы в каталоге</div>
+                            <div class="step-text">Выбираете товары в каталоге</div>
                         </div>
                         <div class="step">
                             <div class="step-number">2</div>
@@ -103,22 +128,22 @@
                         </div>
                         <div class="step">
                             <div class="step-number">3</div>
-                            <div class="step-text">Ожидаете доставку в указанное время</div>
+                            <div class="step-text">Ожидаете доставку курьером</div>
                         </div>
                     </div>
                     
                     <div class="about-section">
                         <h3>📞 Контакты</h3>
-                        <p>Поддержка в боте: 9:00-21:00</p>
-                        <p>Телеграм-канал: @bunch_channel</p>
-                        <p>Доставка: по всей Москве</p>
+                        <p>Поддержка: временно не доступна</p>
+                        <p>Доставка: по всему городу</p>
+                        <p>Время работы: 9:00-21:00</p>
                     </div>
                     
                     <div class="about-section">
-                        <h3>🚚 Доставка</h3>
-                        <p>• Ежедневно с 9:00 до 21:00</p>
-                        <p>• Можно выбрать удобное время</p>
-                        <p>• Стильная упаковка в бокс</p>
+                        <h3>🚚 Доставка и оплата</h3>
+                        <p>• Курьерская доставка 1-2 дня</p>
+                        <p>• Самовывоз из пунктов выдачи</p>
+                        <p>• Оплата картой или наличными</p>
                     </div>
                 </div>
             </div>
@@ -128,7 +153,7 @@
         <div class="bottom-menu">
             <div class="menu-item active" data-page="main">
                 <span>🏠</span>
-                <span>Меню</span>
+                <span>Каталог</span>
             </div>
             <div class="menu-item" data-page="cart">
                 <span>🛒</span>
@@ -141,7 +166,7 @@
             </div>
             <div class="menu-item" data-page="about">
                 <span>ℹ️</span>
-                <span>О проекте</span>
+                <span>О нас</span>
             </div>
         </div>
     </div>
