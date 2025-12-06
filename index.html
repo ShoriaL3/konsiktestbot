@@ -32,7 +32,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
@@ -425,24 +425,6 @@
             flex: 1;
         }
 
-        .cancel-btn {
-            width: 100%;
-            padding: 12px;
-            background: #ff4444;
-            color: white;
-            border: none;
-            border-radius: 10px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .cancel-btn:hover {
-            background: #cc0000;
-        }
-
         /* Страница корзины */
         .cart-item-info {
             flex: 1;
@@ -540,39 +522,16 @@
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             border-radius: 15px;
-            padding: 25px 20px;
+            padding: 30px 20px;
             text-align: center;
             margin-bottom: 25px;
             box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
         }
 
-        .profile-avatar {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            font-size: 36px;
-        }
-
         .profile-name {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: bold;
             margin-bottom: 5px;
-        }
-
-        .profile-username {
-            font-size: 14px;
-            opacity: 0.9;
-            margin-bottom: 10px;
-        }
-
-        .profile-id {
-            font-size: 12px;
-            opacity: 0.7;
         }
 
         .profile-section {
@@ -835,7 +794,6 @@
                         <button id="checkout-btn" class="checkout-btn">Оформить заказ</button>
                         <button id="clear-cart" class="clear-btn">Очистить</button>
                     </div>
-                    <button id="cancel-order-btn" class="cancel-btn">Отменить всё</button>
                 </div>
             </div>
 
@@ -846,10 +804,7 @@
                 </div>
                 <div class="profile-info">
                     <div class="profile-card">
-                        <div class="profile-avatar" id="profile-avatar">👤</div>
                         <div class="profile-name" id="profile-name">Гость</div>
-                        <div class="profile-username" id="profile-username">@username</div>
-                        <div class="profile-id" id="profile-id">ID: 000000</div>
                     </div>
                     
                     <div class="profile-section">
@@ -955,7 +910,6 @@
         const tg = window.Telegram.WebApp;
         tg.expand();
         tg.setHeaderColor('#2196F3');
-        tg.setBackgroundColor('#f8f8f8');
 
         // Состояние приложения
         let state = {
@@ -1012,6 +966,9 @@
             if (state.theme === 'dark') {
                 document.body.classList.add('dark-theme');
                 document.getElementById('theme-toggle').checked = true;
+                tg.setBackgroundColor('#121212');
+            } else {
+                tg.setBackgroundColor('#f8f8f8');
             }
             
             // Устанавливаем уведомления
@@ -1043,54 +1000,12 @@
                     
                     document.getElementById('profile-name').textContent = fullName || 'Гость';
                     
-                    // Username
-                    if (user.username) {
-                        document.getElementById('profile-username').textContent = `@${user.username}`;
-                    } else {
-                        document.getElementById('profile-username').textContent = '';
-                    }
-                    
-                    // ID пользователя
-                    document.getElementById('profile-id').textContent = `ID: ${user.id}`;
-                    
-                    // Аватар (эмодзи в зависимости от пола или имени)
-                    const avatar = document.getElementById('profile-avatar');
-                    if (user.photo_url) {
-                        avatar.innerHTML = `<img src="${user.photo_url}" alt="Avatar" style="width:100%;height:100%;border-radius:50%;">`;
-                    } else {
-                        // Генерируем аватар на основе имени
-                        const emoji = getAvatarEmoji(firstName);
-                        avatar.textContent = emoji;
-                    }
-                    
                     console.log('Профиль Telegram загружен:', user);
                 } else {
                     console.log('Пользователь Telegram не найден, используется гостевая учетка');
                 }
             } catch (error) {
                 console.error('Ошибка загрузки профиля:', error);
-            }
-        }
-
-        // Получение эмодзи для аватара
-        function getAvatarEmoji(name) {
-            if (!name) return '👤';
-            
-            // Простая логика для разных эмодзи на основе первой буквы
-            const firstLetter = name.charAt(0).toUpperCase();
-            
-            if (['А', 'И', 'О', 'У', 'Э', 'A', 'I', 'O', 'U', 'E'].includes(firstLetter)) {
-                return '😊';
-            } else if (['Б', 'В', 'Г', 'Д', 'B', 'C', 'D', 'F', 'G'].includes(firstLetter)) {
-                return '😎';
-            } else if (['Ж', 'З', 'К', 'Л', 'H', 'J', 'K', 'L'].includes(firstLetter)) {
-                return '🤩';
-            } else if (['М', 'Н', 'П', 'Р', 'M', 'N', 'P', 'R'].includes(firstLetter)) {
-                return '😄';
-            } else if (['С', 'Т', 'Ф', 'Х', 'S', 'T', 'V', 'W'].includes(firstLetter)) {
-                return '😃';
-            } else {
-                return '👤';
             }
         }
 
@@ -1250,18 +1165,6 @@
                 clearCart();
             });
             
-            // Кнопка отмены всего
-            document.getElementById('cancel-order-btn')?.addEventListener('click', (e) => {
-                e.preventDefault();
-                if (state.cart.length > 0 && confirm('Отменить все товары в корзине?')) {
-                    state.cart = [];
-                    updateCartBadge();
-                    saveState();
-                    renderCart();
-                    showNotification('Все товары удалены из корзины');
-                }
-            });
-            
             // Кнопка поддержки (неактивная)
             document.getElementById('support-btn')?.addEventListener('click', (e) => {
                 e.preventDefault();
@@ -1283,16 +1186,7 @@
                 themeToggle.addEventListener('change', (e) => {
                     e.preventDefault();
                     const isDark = e.target.checked;
-                    if (isDark) {
-                        document.body.classList.add('dark-theme');
-                        state.theme = 'dark';
-                        tg.setBackgroundColor('#121212');
-                    } else {
-                        document.body.classList.remove('dark-theme');
-                        state.theme = 'light';
-                        tg.setBackgroundColor('#f8f8f8');
-                    }
-                    saveState();
+                    toggleTheme(isDark);
                 });
             }
             
@@ -1306,6 +1200,20 @@
                     showNotification(`Уведомления ${state.notifications ? 'включены' : 'выключены'}`);
                 });
             }
+        }
+
+        // Переключение темы
+        function toggleTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+                state.theme = 'dark';
+                tg.setBackgroundColor('#121212');
+            } else {
+                document.body.classList.remove('dark-theme');
+                state.theme = 'light';
+                tg.setBackgroundColor('#f8f8f8');
+            }
+            saveState();
         }
 
         // Выбор категории
