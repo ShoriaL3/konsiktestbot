@@ -5,23 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Мой магазин</title>
     <style>
+        :root {
+            --primary-color: #2196F3;
+            --primary-dark: #1976D2;
+            --text-color: #333;
+            --bg-color: #f8f8f8;
+            --card-bg: white;
+            --border-color: #eee;
+            --shadow-color: rgba(0,0,0,0.08);
+            --notification-bg: #2196F3;
+            --notification-color: white;
+        }
+
+        body.dark-theme {
+            --primary-color: #64B5F6;
+            --primary-dark: #42A5F5;
+            --text-color: #e0e0e0;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --border-color: #333;
+            --shadow-color: rgba(0,0,0,0.3);
+            --notification-bg: #64B5F6;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f8f8f8;
-            color: #333;
+            background: var(--bg-color);
+            color: var(--text-color);
             -webkit-tap-highlight-color: transparent;
         }
 
         .app {
             max-width: 500px;
             margin: 0 auto;
-            background: white;
+            background: var(--card-bg);
             min-height: 100vh;
             position: relative;
             padding-bottom: 70px;
@@ -29,19 +53,19 @@
 
         /* БЕГУЩАЯ СТРОКА */
         .marquee {
-            background: linear-gradient(90deg, #ff6b6b, #2196F3);
+            background: linear-gradient(90deg, #ff6b6b, var(--primary-color));
             color: white;
             padding: 8px 0;
             overflow: hidden;
             position: relative;
             font-weight: 600;
             font-size: 14px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 5px var(--shadow-color);
         }
 
         .marquee-content {
             display: flex;
-            animation: marquee 30s linear infinite;
+            animation: marquee 20s linear infinite;
             white-space: nowrap;
         }
 
@@ -63,8 +87,8 @@
         .categories-wrapper {
             display: flex;
             align-items: center;
-            background: white;
-            border-bottom: 1px solid #eee;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
             position: relative;
             padding: 0 40px;
         }
@@ -76,12 +100,12 @@
             width: 32px;
             height: 32px;
             border: none;
-            background: white;
+            background: var(--card-bg);
             border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 2px 8px var(--shadow-color);
             cursor: pointer;
             font-size: 18px;
-            color: #2196F3;
+            color: var(--primary-color);
             z-index: 10;
             display: flex;
             align-items: center;
@@ -90,7 +114,7 @@
         }
 
         .scroll-btn:hover {
-            background: #f5f5f5;
+            background: var(--border-color);
             transform: translateY(-50%) scale(1.1);
         }
 
@@ -119,12 +143,12 @@
         .category {
             padding: 10px 18px;
             border-radius: 25px;
-            background: #f5f5f5;
+            background: var(--border-color);
             white-space: nowrap;
             cursor: pointer;
             font-size: 14px;
             font-weight: 500;
-            color: #666;
+            color: var(--text-color);
             transition: all 0.3s ease;
             flex-shrink: 0;
             border: 2px solid transparent;
@@ -132,17 +156,17 @@
         }
 
         .category.active {
-            background: #2196F3;
+            background: var(--primary-color);
             color: white;
             box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
-            border-color: #1976D2;
+            border-color: var(--primary-dark);
             transform: translateY(-1px);
         }
 
         .category:hover:not(.active) {
-            background: #e3f2fd;
-            color: #2196F3;
-            border-color: #bbdefb;
+            background: rgba(33, 150, 243, 0.1);
+            color: var(--primary-color);
+            border-color: rgba(33, 150, 243, 0.3);
         }
 
         /* Контент */
@@ -162,12 +186,12 @@
 
         .page-header {
             padding: 20px 15px 15px;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .page-header h2 {
             font-size: 20px;
-            color: #333;
+            color: var(--text-color);
             margin-bottom: 5px;
         }
 
@@ -180,22 +204,22 @@
         }
 
         .product-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px var(--shadow-color);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
         .product-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+            box-shadow: 0 4px 12px var(--shadow-color);
         }
 
         .product-image {
             width: 100%;
             height: 150px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, var(--border-color) 0%, rgba(195, 207, 226, 0.5) 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -239,7 +263,7 @@
         }
 
         .product-price {
-            color: #2196F3;
+            color: var(--primary-color);
             font-weight: bold;
             font-size: 16px;
             margin-bottom: 10px;
@@ -248,7 +272,7 @@
         .add-to-cart {
             width: 100%;
             padding: 10px;
-            background: #2196F3;
+            background: var(--primary-color);
             color: white;
             border: none;
             border-radius: 8px;
@@ -258,7 +282,7 @@
         }
 
         .add-to-cart:hover {
-            background: #1976D2;
+            background: var(--primary-dark);
         }
 
         /* Нижнее меню */
@@ -270,11 +294,11 @@
             max-width: 500px;
             margin: 0 auto;
             display: flex;
-            background: white;
-            border-top: 1px solid #eee;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
             padding: 8px 0;
             z-index: 1000;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 -2px 10px var(--shadow-color);
         }
 
         .menu-item {
@@ -282,17 +306,19 @@
             text-align: center;
             padding: 8px 5px;
             cursor: pointer;
-            color: #666;
+            color: var(--text-color);
+            opacity: 0.7;
             display: flex;
             flex-direction: column;
             align-items: center;
             font-size: 12px;
             position: relative;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
         }
 
         .menu-item.active {
-            color: #2196F3;
+            color: var(--primary-color);
+            opacity: 1;
         }
 
         .menu-item span:first-child {
@@ -330,7 +356,7 @@
             gap: 10px;
             min-height: 200px;
             scrollbar-width: thin;
-            scrollbar-color: #2196F3 #f5f5f5;
+            scrollbar-color: var(--primary-color) var(--border-color);
         }
 
         .cart-items::-webkit-scrollbar {
@@ -338,17 +364,17 @@
         }
 
         .cart-items::-webkit-scrollbar-track {
-            background: #f5f5f5;
+            background: var(--border-color);
             border-radius: 3px;
         }
 
         .cart-items::-webkit-scrollbar-thumb {
-            background: #2196F3;
+            background: var(--primary-color);
             border-radius: 3px;
         }
 
         .cart-items::-webkit-scrollbar-thumb:hover {
-            background: #1976D2;
+            background: var(--primary-dark);
         }
 
         .cart-item {
@@ -356,10 +382,10 @@
             justify-content: space-between;
             align-items: center;
             padding: 15px;
-            background: white;
+            background: var(--card-bg);
             border-radius: 10px;
             margin-bottom: 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px var(--shadow-color);
             flex-shrink: 0;
             min-width: 100%;
         }
@@ -376,8 +402,8 @@
 
         .cart-footer {
             padding: 20px 15px;
-            background: white;
-            border-top: 1px solid #eee;
+            background: var(--card-bg);
+            border-top: 1px solid var(--border-color);
             position: sticky;
             bottom: 70px;
             transition: all 0.3s ease;
@@ -428,7 +454,7 @@
         }
 
         .cart-item-price {
-            color: #2196F3;
+            color: var(--primary-color);
             font-weight: 600;
         }
 
@@ -474,7 +500,7 @@
         .checkout-btn {
             width: 100%;
             padding: 16px;
-            background: #2196F3;
+            background: var(--primary-color);
             color: white;
             border: none;
             border-radius: 10px;
@@ -486,14 +512,14 @@
         }
 
         .checkout-btn:hover {
-            background: #1976D2;
+            background: var(--primary-dark);
         }
 
         .clear-btn {
             width: 100%;
             padding: 12px;
-            background: #f5f5f5;
-            color: #666;
+            background: var(--border-color);
+            color: var(--text-color);
             border: none;
             border-radius: 10px;
             font-size: 14px;
@@ -510,8 +536,8 @@
             padding: 20px 15px;
         }
 
-        .balance-card {
-            background: linear-gradient(135deg, #2196F3, #1976D2);
+        .profile-card {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             border-radius: 15px;
             padding: 25px 20px;
@@ -520,35 +546,47 @@
             box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
         }
 
-        .balance-title {
-            font-size: 16px;
-            opacity: 0.9;
-            margin-bottom: 8px;
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-size: 36px;
         }
 
-        .balance-amount {
-            font-size: 32px;
+        .profile-name {
+            font-size: 22px;
             font-weight: bold;
             margin-bottom: 5px;
         }
 
-        .balance-subtitle {
+        .profile-username {
             font-size: 14px;
-            opacity: 0.8;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .profile-id {
+            font-size: 12px;
+            opacity: 0.7;
         }
 
         .profile-section {
             margin-bottom: 25px;
             padding: 20px;
-            background: white;
+            background: var(--card-bg);
             border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px var(--shadow-color);
         }
 
         .profile-section h3 {
             font-size: 16px;
             margin-bottom: 15px;
-            color: #333;
+            color: var(--text-color);
         }
 
         .settings-item {
@@ -556,7 +594,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 12px 0;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .settings-item:last-child {
@@ -601,7 +639,7 @@
         }
 
         input:checked + .slider {
-            background-color: #2196F3;
+            background-color: var(--primary-color);
         }
 
         input:checked + .slider:before {
@@ -609,8 +647,8 @@
         }
 
         .support-btn {
-            background: #cccccc;
-            color: #666666;
+            background: var(--border-color);
+            color: var(--text-color);
             cursor: not-allowed;
             opacity: 0.7;
             width: 100%;
@@ -623,16 +661,11 @@
             margin-bottom: 10px;
         }
 
-        .support-btn:hover {
-            background: #cccccc;
-            transform: none;
-        }
-
         .logout-btn {
             width: 100%;
             padding: 15px;
-            background: #f5f5f5;
-            color: #666;
+            background: var(--border-color);
+            color: var(--text-color);
             border: none;
             border-radius: 10px;
             font-size: 16px;
@@ -643,7 +676,8 @@
         }
 
         .logout-btn:hover {
-            background: #e0e0e0;
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
         }
 
         /* Страница "О магазине" */
@@ -652,16 +686,16 @@
         }
 
         .about-card {
-            background: white;
+            background: var(--card-bg);
             border-radius: 15px;
             padding: 25px 20px;
             text-align: center;
             margin-bottom: 25px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 15px var(--shadow-color);
         }
 
         .about-card h3 {
-            color: #2196F3;
+            color: var(--primary-color);
             margin-bottom: 10px;
             font-size: 20px;
         }
@@ -669,15 +703,15 @@
         .about-section {
             margin-bottom: 25px;
             padding: 20px;
-            background: white;
+            background: var(--card-bg);
             border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 5px var(--shadow-color);
         }
 
         .about-section h3 {
             font-size: 16px;
             margin-bottom: 15px;
-            color: #333;
+            color: var(--text-color);
         }
 
         .step {
@@ -685,12 +719,12 @@
             align-items: center;
             margin-bottom: 15px;
             padding: 10px;
-            background: #f9f9f9;
+            background: var(--border-color);
             border-radius: 8px;
         }
 
         .step-number {
-            background: #2196F3;
+            background: var(--primary-color);
             color: white;
             width: 30px;
             height: 30px;
@@ -811,10 +845,11 @@
                     <h2>👤 Профиль</h2>
                 </div>
                 <div class="profile-info">
-                    <div class="balance-card">
-                        <div class="balance-title">Ваши баллы</div>
-                        <div class="balance-amount" id="user-balance">500</div>
-                        <div class="balance-subtitle">1 балл = 1 рубль</div>
+                    <div class="profile-card">
+                        <div class="profile-avatar" id="profile-avatar">👤</div>
+                        <div class="profile-name" id="profile-name">Гость</div>
+                        <div class="profile-username" id="profile-username">@username</div>
+                        <div class="profile-id" id="profile-id">ID: 000000</div>
                     </div>
                     
                     <div class="profile-section">
@@ -827,16 +862,20 @@
                         <div class="settings-item">
                             <span>Уведомления</span>
                             <label class="switch">
-                                <input type="checkbox" checked>
+                                <input type="checkbox" checked id="notifications-toggle">
                                 <span class="slider"></span>
                             </label>
                         </div>
                         <div class="settings-item">
                             <span>Темная тема</span>
                             <label class="switch">
-                                <input type="checkbox">
+                                <input type="checkbox" id="theme-toggle">
                                 <span class="slider"></span>
                             </label>
+                        </div>
+                        <div class="settings-item">
+                            <span>Язык</span>
+                            <span>Русский</span>
                         </div>
                     </div>
                     
@@ -923,13 +962,15 @@
             cart: [],
             balance: 500,
             currentPage: 'main',
-            selectedCategory: 'Все товары'
+            selectedCategory: 'Все товары',
+            theme: 'light',
+            notifications: true
         };
 
         // Данные товаров
         const products = [
             { id: 1, name: "📱 Смартфон Xiaomi", price: 19900, category: "Электроника", desc: "Современный смартфон с хорошей камерой" },
-            { id: 2, name: "🎧 Беспровроводные наушники", price: 3200, category: "Электроника", desc: "Наушники с шумоподавлением" },
+            { id: 2, name: "🎧 Беспроводные наушники", price: 3200, category: "Электроника", desc: "Наушники с шумоподавлением" },
             { id: 3, name: "👕 Футболка мужская", price: 1500, category: "Одежда", desc: "Хлопковая футболка, размеры S-XXL" },
             { id: 4, name: "📚 Книга 'Программирование'", price: 1200, category: "Книги", desc: "Учебник по программированию для начинающих" },
             { id: 5, name: "🏀 Баскетбольный мяч", price: 2500, category: "Спорт", desc: "Мяч для игры в баскетбол" },
@@ -951,6 +992,7 @@
             showPage('main');
             renderProducts();
             updateCartBadge();
+            loadUserProfile();
         });
 
         // Инициализация приложения
@@ -958,18 +1000,98 @@
             // Загружаем состояние из localStorage если есть
             const savedState = localStorage.getItem('shopState');
             if (savedState) {
-                state = JSON.parse(savedState);
+                const parsed = JSON.parse(savedState);
+                state.cart = parsed.cart || [];
+                state.balance = parsed.balance || 500;
+                state.selectedCategory = parsed.selectedCategory || 'Все товары';
+                state.theme = parsed.theme || 'light';
+                state.notifications = parsed.notifications !== undefined ? parsed.notifications : true;
             }
             
-            // Устанавливаем баланс
-            document.getElementById('user-balance').textContent = state.balance;
+            // Устанавливаем тему
+            if (state.theme === 'dark') {
+                document.body.classList.add('dark-theme');
+                document.getElementById('theme-toggle').checked = true;
+            }
+            
+            // Устанавливаем уведомления
+            document.getElementById('notifications-toggle').checked = state.notifications;
             
             console.log('Магазин товаров загружен');
         }
 
         // Сохранение состояния
         function saveState() {
-            localStorage.setItem('shopState', JSON.stringify(state));
+            localStorage.setItem('shopState', JSON.stringify({
+                cart: state.cart,
+                balance: state.balance,
+                selectedCategory: state.selectedCategory,
+                theme: state.theme,
+                notifications: state.notifications
+            }));
+        }
+
+        // Загрузка профиля пользователя Telegram
+        function loadUserProfile() {
+            try {
+                const user = tg.initDataUnsafe.user;
+                if (user) {
+                    // Имя и фамилия
+                    const firstName = user.first_name || '';
+                    const lastName = user.last_name || '';
+                    const fullName = [firstName, lastName].filter(Boolean).join(' ');
+                    
+                    document.getElementById('profile-name').textContent = fullName || 'Гость';
+                    
+                    // Username
+                    if (user.username) {
+                        document.getElementById('profile-username').textContent = `@${user.username}`;
+                    } else {
+                        document.getElementById('profile-username').textContent = '';
+                    }
+                    
+                    // ID пользователя
+                    document.getElementById('profile-id').textContent = `ID: ${user.id}`;
+                    
+                    // Аватар (эмодзи в зависимости от пола или имени)
+                    const avatar = document.getElementById('profile-avatar');
+                    if (user.photo_url) {
+                        avatar.innerHTML = `<img src="${user.photo_url}" alt="Avatar" style="width:100%;height:100%;border-radius:50%;">`;
+                    } else {
+                        // Генерируем аватар на основе имени
+                        const emoji = getAvatarEmoji(firstName);
+                        avatar.textContent = emoji;
+                    }
+                    
+                    console.log('Профиль Telegram загружен:', user);
+                } else {
+                    console.log('Пользователь Telegram не найден, используется гостевая учетка');
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки профиля:', error);
+            }
+        }
+
+        // Получение эмодзи для аватара
+        function getAvatarEmoji(name) {
+            if (!name) return '👤';
+            
+            // Простая логика для разных эмодзи на основе первой буквы
+            const firstLetter = name.charAt(0).toUpperCase();
+            
+            if (['А', 'И', 'О', 'У', 'Э', 'A', 'I', 'O', 'U', 'E'].includes(firstLetter)) {
+                return '😊';
+            } else if (['Б', 'В', 'Г', 'Д', 'B', 'C', 'D', 'F', 'G'].includes(firstLetter)) {
+                return '😎';
+            } else if (['Ж', 'З', 'К', 'Л', 'H', 'J', 'K', 'L'].includes(firstLetter)) {
+                return '🤩';
+            } else if (['М', 'Н', 'П', 'Р', 'M', 'N', 'P', 'R'].includes(firstLetter)) {
+                return '😄';
+            } else if (['С', 'Т', 'Ф', 'Х', 'S', 'T', 'V', 'W'].includes(firstLetter)) {
+                return '😃';
+            } else {
+                return '👤';
+            }
         }
 
         // Настройка горизонтальной прокрутки категорий
@@ -1156,12 +1278,32 @@
             });
             
             // Переключение темы
-            const themeToggle = document.querySelector('input[type="checkbox"][value=""]');
+            const themeToggle = document.getElementById('theme-toggle');
             if (themeToggle) {
                 themeToggle.addEventListener('change', (e) => {
                     e.preventDefault();
-                    document.body.classList.toggle('dark-theme', e.target.checked);
+                    const isDark = e.target.checked;
+                    if (isDark) {
+                        document.body.classList.add('dark-theme');
+                        state.theme = 'dark';
+                        tg.setBackgroundColor('#121212');
+                    } else {
+                        document.body.classList.remove('dark-theme');
+                        state.theme = 'light';
+                        tg.setBackgroundColor('#f8f8f8');
+                    }
                     saveState();
+                });
+            }
+            
+            // Переключение уведомлений
+            const notificationsToggle = document.getElementById('notifications-toggle');
+            if (notificationsToggle) {
+                notificationsToggle.addEventListener('change', (e) => {
+                    e.preventDefault();
+                    state.notifications = e.target.checked;
+                    saveState();
+                    showNotification(`Уведомления ${state.notifications ? 'включены' : 'выключены'}`);
                 });
             }
         }
@@ -1393,10 +1535,7 @@
 
         // Обновить профиль
         function updateProfile() {
-            const balanceElement = document.getElementById('user-balance');
-            if (balanceElement) {
-                balanceElement.textContent = state.balance;
-            }
+            // Ничего не делаем, так как профиль загружается из Telegram
         }
 
         // Очистить корзину
@@ -1441,20 +1580,20 @@
                     padding: 20px;
                 ">
                     <div style="
-                        background: white;
+                        background: var(--card-bg);
+                        color: var(--text-color);
                         border-radius: 15px;
                         padding: 25px;
                         max-width: 400px;
                         width: 100%;
-                        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+                        box-shadow: 0 10px 30px var(--shadow-color);
                     ">
-                        <h3 style="margin: 0 0 15px 0; color: #2196F3;">Подтверждение заказа</h3>
+                        <h3 style="margin: 0 0 15px 0; color: var(--primary-color);">Подтверждение заказа</h3>
                         
                         <div style="margin-bottom: 20px;">
                             <p>Товаров в корзине: <strong>${state.cart.reduce((sum, item) => sum + item.quantity, 0)} шт.</strong></p>
                             <p>Общая стоимость: <strong>${total.toLocaleString()} ₽</strong></p>
-                            <p>Ваш баланс: <strong>${state.balance.toLocaleString()} ₽</strong></p>
-                            <p style="font-size: 18px; color: #2196F3; font-weight: bold; margin-top: 10px;">
+                            <p style="font-size: 18px; color: var(--primary-color); font-weight: bold; margin-top: 10px;">
                                 Итого к оплате: <strong>${finalPrice.toLocaleString()} ₽</strong>
                             </p>
                         </div>
@@ -1463,7 +1602,7 @@
                             <button id="confirm-order" style="
                                 flex: 1;
                                 padding: 12px;
-                                background: #2196F3;
+                                background: var(--primary-color);
                                 color: white;
                                 border: none;
                                 border-radius: 10px;
@@ -1474,8 +1613,8 @@
                             <button id="cancel-order" style="
                                 flex: 1;
                                 padding: 12px;
-                                background: #f5f5f5;
-                                color: #666;
+                                background: var(--border-color);
+                                color: var(--text-color);
                                 border: none;
                                 border-radius: 10px;
                                 font-weight: 600;
@@ -1520,7 +1659,8 @@
                 balanceUsed: Math.min(state.balance, total),
                 finalPrice: finalPrice,
                 timestamp: new Date().toISOString(),
-                shop: 'Мой магазин'
+                shop: 'Мой магазин',
+                user: tg.initDataUnsafe.user
             };
             
             // Отправляем данные в Telegram бота
@@ -1537,11 +1677,13 @@
             updateCartBadge();
             saveState();
             renderCart();
-            updateProfile();
         }
 
         // Показать уведомление
         function showNotification(message, duration = 3000) {
+            // Проверяем, включены ли уведомления
+            if (!state.notifications) return;
+            
             // Создаем элемент уведомления
             const notification = document.createElement('div');
             notification.className = 'notification';
@@ -1551,7 +1693,7 @@
                 top: 20px;
                 left: 50%;
                 transform: translateX(-50%);
-                background: #2196F3;
+                background: var(--notification-bg);
                 color: white;
                 padding: 12px 24px;
                 border-radius: 25px;
@@ -1588,6 +1730,7 @@
         console.log('Магазин товаров загружен');
         console.log('Web App URL:', window.location.href);
         console.log('Telegram WebApp доступен:', !!tg);
+        console.log('Пользователь Telegram:', tg.initDataUnsafe.user);
     </script>
 </body>
 </html>
