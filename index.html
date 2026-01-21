@@ -1920,7 +1920,20 @@
                 showNotification('❌ Ошибка: не удалось отправить заказ');
             }
         }
+	
+	// Для отладки - выводим все события
+	tg.onEvent('viewportChanged', (e) => {
+   		console.log('viewportChanged:', e);
+	});
 
+	tg.onEvent('themeChanged', (e) => {
+		console.log('themeChanged:', e);
+	});
+
+// Проверяем доступность sendData
+console.log('Telegram WebApp доступен:', !!tg);
+console.log('sendData доступен:', !!tg.sendData);
+console.log('initData:', tg.initDataUnsafe);
         // Показать уведомление
         function showNotification(message, duration = 3000) {
             // Проверяем, включены ли уведомления
