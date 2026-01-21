@@ -347,6 +347,32 @@
             background: #42A5F5;
         }
 
+        /* Кнопка быстрой покупки */
+        .quick-buy-btn {
+            width: 100%;
+            padding: 10px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 5px;
+            transition: background 0.3s ease;
+        }
+
+        .quick-buy-btn:hover {
+            background: #45a049;
+        }
+
+        body.dark-theme .quick-buy-btn {
+            background: #2E7D32;
+        }
+
+        body.dark-theme .quick-buy-btn:hover {
+            background: #1B5E20;
+        }
+
         /* Нижнее меню */
         .bottom-menu {
             position: fixed;
@@ -934,6 +960,12 @@
                 font-size: 13px;
             }
         }
+
+        /* Анимация для уведомлений */
+        @keyframes slideIn {
+            from { top: -50px; opacity: 0; }
+            to { top: 20px; opacity: 1; }
+        }
     </style>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
@@ -990,8 +1022,8 @@
                         <span id="total-price">0 ₽</span>
                     </div>
                     <div class="checkout-buttons">
-                        <button id="checkout-btn" class="checkout-btn">Оформить заказ</button>
-                        <button id="clear-cart" class="clear-btn">Очистить</button>
+                        <button id="checkout-btn" class="checkout-btn">✅ Оформить заказ</button>
+                        <button id="clear-cart" class="clear-btn">🗑️ Очистить</button>
                     </div>
                 </div>
             </div>
@@ -1150,7 +1182,7 @@
             renderProducts();
             updateCartBadge();
             loadUserProfile();
-            initBotStatusChecker(); // Добавляем проверку статуса бота
+            initBotStatusChecker();
         });
 
         // Инициализация приложения
@@ -1189,7 +1221,6 @@
                 console.log('🔍 Проверяю статус бота...');
                 
                 // Простая проверка - пытаемся получить информацию о боте
-                // Используем любой публичный эндпоинт Telegram API
                 const controller = new AbortController();
                 const timeoutId = setTimeout(() => controller.abort(), 5000);
                 
@@ -1222,7 +1253,6 @@
 
         // Показать сообщение о том, что бот выключен
         function showBotOfflineMessage() {
-            // Проверяем, не показывается ли уже сообщение
             if (document.getElementById('bot-offline-message')) return;
             
             const message = document.createElement('div');
@@ -1274,7 +1304,7 @@
             document.body.appendChild(message);
             
             // Блокируем взаимодействие с интерфейсом
-            document.querySelectorAll('button, .category, .menu-item, .add-to-cart').forEach(el => {
+            document.querySelectorAll('button, .category, .menu-item, .add-to-cart, .quick-buy-btn').forEach(el => {
                 el.style.pointerEvents = 'none';
                 el.style.opacity = '0.5';
             });
@@ -1288,7 +1318,7 @@
             }
             
             // Разблокируем взаимодействие с интерфейсом
-            document.querySelectorAll('button, .category, .menu-item, .add-to-cart').forEach(el => {
+            document.querySelectorAll('button, .category, .menu-item, .add-to-cart, .quick-buy-btn').forEach(el => {
                 el.style.pointerEvents = 'auto';
                 el.style.opacity = '1';
             });
@@ -1326,7 +1356,6 @@
             try {
                 const user = tg.initDataUnsafe.user;
                 if (user) {
-                    // Имя и фамилия
                     const firstName = user.first_name || '';
                     const lastName = user.last_name || '';
                     const fullName = [firstName, lastName].filter(Boolean).join(' ');
@@ -1471,11 +1500,40 @@
                 });
             });
 
-            // Обработка добавления в корзину
+            // Обработка добавления в корзину и быстрой покупки
             document.addEventListener('click', (e) => {
                 if (e.target.classList.contains('add-to-cart')) {
                     const productId = parseInt(e.target.dataset.id);
                     addToCart(productId);
+                }
+                
+                if (e.target.classList.contains('quick-buy-btn')) {
+                    const productId = parseInt(e.target.dataset.id);
+                    const product = products.find(p => p.id === productId);
+                    
+                    if (product) {
+                        // Создаем заказ с одним товаром
+                        const orderData = {
+                            action: 'checkout',
+                            items: [{
+                                id: product.id,
+                                name: product.name,
+                                price: product.price,
+                                quantity: 1,
+                                description: product.desc
+                            }],
+                            total: product.price,
+                            shop: 'Мой магазин',
+                            timestamp: new Date().toISOString()
+                        };
+                        
+                        console.log('Быстрая покупка:', orderData);
+                        
+                        if (tg && tg.sendData) {
+                            tg.sendData(JSON.stringify(orderData));
+                            showNotification('Товар добавлен в заказ! Перейдите в бота для оформления.', 5000);
+                        }
+                    }
                 }
                 
                 if (e.target.classList.contains('cart-item-remove')) {
@@ -1632,7 +1690,10 @@
                         <div class="product-desc">${product.desc}</div>
                         <div class="product-price">${product.price.toLocaleString()} ₽</div>
                         <button class="add-to-cart" data-id="${product.id}">
-                            ${quantity > 0 ? `✓ В корзине (${quantity})` : 'Добавить в корзину'}
+                            ${quantity > 0 ? `✓ В корзине (${quantity})` : '🛒 Добавить в корзину'}
+                        </button>
+                        <button class="quick-buy-btn" data-id="${product.id}">
+                            ⚡ Купить сейчас
                         </button>
                     </div>
                 `;
@@ -1818,121 +1879,46 @@
             }
             
             const total = state.cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            const finalPrice = Math.max(0, total - state.balance);
             
-            // Показываем диалог подтверждения с возможностью отмены
-            const confirmDialog = `
-                <div class="checkout-dialog" style="
-                    position: fixed;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    bottom: 0;
-                    background: rgba(0,0,0,0.5);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    z-index: 10000;
-                    padding: 20px;
-                ">
-                    <div style="
-                        background: ${state.theme === 'dark' ? '#2e2e2e' : 'white'};
-                        color: ${state.theme === 'dark' ? '#e0e0e0' : '#333'};
-                        border-radius: 15px;
-                        padding: 25px;
-                        max-width: 400px;
-                        width: 100%;
-                        box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-                    ">
-                        <h3 style="margin: 0 0 15px 0; color: ${state.theme === 'dark' ? '#64B5F6' : '#2196F3'};">Подтверждение заказа</h3>
-                        
-                        <div style="margin-bottom: 20px;">
-                            <p>Товаров в корзине: <strong>${state.cart.reduce((sum, item) => sum + item.quantity, 0)} шт.</strong></p>
-                            <p>Общая стоимость: <strong>${total.toLocaleString()} ₽</strong></p>
-                            <p style="font-size: 18px; color: ${state.theme === 'dark' ? '#64B5F6' : '#2196F3'}; font-weight: bold; margin-top: 10px;">
-                                Итого к оплате: <strong>${finalPrice.toLocaleString()} ₽</strong>
-                            </p>
-                        </div>
-                        
-                        <div style="display: flex; gap: 10px;">
-                            <button id="confirm-order" style="
-                                flex: 1;
-                                padding: 12px;
-                                background: ${state.theme === 'dark' ? '#64B5F6' : '#2196F3'};
-                                color: white;
-                                border: none;
-                                border-radius: 10px;
-                                font-weight: 600;
-                                cursor: pointer;
-                            ">Оплатить</button>
-                            
-                            <button id="cancel-order" style="
-                                flex: 1;
-                                padding: 12px;
-                                background: ${state.theme === 'dark' ? '#3e3e3e' : '#f5f5f5'};
-                                color: ${state.theme === 'dark' ? '#e0e0e0' : '#666'};
-                                border: none;
-                                border-radius: 10px;
-                                font-weight: 600;
-                                cursor: pointer;
-                            ">Отмена</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            const dialogElement = document.createElement('div');
-            dialogElement.innerHTML = confirmDialog;
-            document.body.appendChild(dialogElement.firstChild);
-            
-            // Обработчики кнопок диалога
-            document.getElementById('confirm-order').addEventListener('click', () => {
-                processOrder(total, finalPrice);
-                dialogElement.remove();
-            });
-            
-            document.getElementById('cancel-order').addEventListener('click', () => {
-                dialogElement.remove();
-                showNotification('Заказ отменен');
-            });
-            
-            // Закрытие при клике вне диалога
-            dialogElement.firstChild.addEventListener('click', (e) => {
-                if (e.target === dialogElement.firstChild) {
-                    dialogElement.remove();
-                    showNotification('Заказ отменен');
-                }
-            });
-        }
-
-        // Обработка заказа
-        function processOrder(total, finalPrice) {
+            // Создаем данные для отправки в бота
             const orderData = {
-                type: 'order',
-                cart: state.cart,
+                action: 'checkout',
+                cart: state.cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity,
+                    description: item.desc
+                })),
                 total: total,
-                balance: state.balance,
-                balanceUsed: Math.min(state.balance, total),
-                finalPrice: finalPrice,
-                timestamp: new Date().toISOString(),
                 shop: 'Мой магазин',
-                user: tg.initDataUnsafe.user
+                timestamp: new Date().toISOString(),
+                user_id: tg.initDataUnsafe.user?.id || null,
+                user_name: tg.initDataUnsafe.user?.first_name || 'Покупатель'
             };
+            
+            console.log('Отправляем заказ в бота:', orderData);
             
             // Отправляем данные в Telegram бота
             if (tg && tg.sendData) {
                 tg.sendData(JSON.stringify(orderData));
+                
+                // Показываем сообщение о том, что заказ отправлен
+                showNotification('✅ Заказ отправлен! Перейдите в бота для оформления.', 5000);
+                
+                // Очищаем корзину после отправки
+                state.cart = [];
+                updateCartBadge();
+                saveState();
+                renderCart();
+                
+                // Обновляем главную страницу если открыта
+                if (state.currentPage === 'main') {
+                    renderProducts(state.selectedCategory);
+                }
+            } else {
+                showNotification('❌ Ошибка: не удалось отправить заказ');
             }
-            
-            // Показываем подтверждение
-            showNotification(`Заказ оформлен на ${finalPrice.toLocaleString()} ₽!`, 5000);
-            
-            // Очищаем корзину после оформления
-            state.cart = [];
-            state.balance = Math.max(0, state.balance - Math.min(state.balance, total));
-            updateCartBadge();
-            saveState();
-            renderCart();
         }
 
         // Показать уведомление
@@ -1957,17 +1943,10 @@
                 z-index: 10000;
                 font-weight: 500;
                 animation: slideIn 0.3s ease;
+                text-align: center;
+                max-width: 90%;
+                word-break: break-word;
             `;
-            
-            // Добавляем стили анимации
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideIn {
-                    from { top: -50px; opacity: 0; }
-                    to { top: 20px; opacity: 1; }
-                }
-            `;
-            document.head.appendChild(style);
             
             document.body.appendChild(notification);
             
@@ -1983,10 +1962,11 @@
         }
 
         // Для отладки
-        console.log('Магазин товаров загружен');
-        console.log('Web App URL:', window.location.href);
-        console.log('Telegram WebApp доступен:', !!tg);
-        console.log('Пользователь Telegram:', tg.initDataUnsafe.user);
+        console.log('✅ Магазин товаров загружен');
+        console.log('🔗 Web App URL:', window.location.href);
+        console.log('🤖 Telegram WebApp доступен:', !!tg);
+        console.log('👤 Пользователь Telegram:', tg.initDataUnsafe.user);
+        console.log('📦 Товаров в каталоге:', products.length);
     </script>
 </body>
 </html>
